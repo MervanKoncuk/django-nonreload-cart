@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neos Ticaret</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <style>
+      .errorlist {
+        color: red;
+        list-style: none;
+        padding: 0;
+      }
+    </style>
+</head>
+<body>
+    {% include "includes/navbar.html" %}
+      
+
+      {% if messages %}
+          {% for mesaj in messages %}
+              <div class="alert alert-{{mesaj.tags}} text-center">
+                {{mesaj}}
+              </div>
+          {% endfor %}
+      {% else %}
+      {% endif %}
+
+      {% block content %}
+      <div class="container mt-3">
+        <p id="uzunluk">{{uzunluk.all.count}}</p>
+        <div class="row">
+            {% for urun in urunler %}
+                <div class="col-3">
+                    <div class="card">
+                      {% if urun.resim %}
+                          <img src="{{urun.resim.url}}" height="200" class="card-img-top" alt="...">
+                      {% else %}
+                          <img src="{% static 'resim.jpg' %}" height="200" class="card-img-top" alt="...">
+                      {% endif %}
+                        <div class="card-body">
+                          <h5 class="card-title">{{urun.isim}}</h5>
+                          {% for i in urun.sub_category.all %}
+                              <small>{{i.isim}} 
+                              {% if forloop.last %}
+                              
+                              {% else %}
+                                  - 
+                              {% endif %}  
+                              </small>
+                          {% endfor %}
+                          <p class="card-text">{{urun.aciklama|safe}}</p>
+                          <p>{{urun.kategori.isim}}</p>
+                          {% if urun.tek %}
+                              <p>{{urun.tek}}</p>
+                          {% else %}
+                          {% endif %}
+                          
+                          <a href="{% url 'urun' urun.id %}" class="btn btn-primary">Go somewhere</a>
+                          <form action="" method="POST" id="formdata-{{urun.id}}" role="form" class="contactForm">
+                            {% csrf_token %}
+                            <input type="hidden" name="urunId" id="urunId-{{urun.id}}" value="{{urun.id}}">
+                            <input type="number" name="adet" id="adet-{{urun.id}}">
+                            <input type="submit" onclick="sepeteEkle('{{urun.id}}')" value="Sepete Ekle" id="conctactsub" class="btn btn-primary mt-2">
+                          </form>
+                        </div>
+                      </div>
+                </div>
+               
+            {% endfor %}
+        </div>
+
+        <p id="output-message">
+
+        </p>
+      </div>
+      {% endblock content %}
+
+      <!-- link : https://ridwanray.medium.com/django-and-fetch-api-form-submissions-without-page-reloading-dc5106598005 -->
+      <script type="text/javascript">
+        function sepeteEkle(urunId) {
+            document.getElementById("formdata-"+urunId).addEventListener("submit", function(e){
+            e.preventDefault();
+            urunId = document.getElementById("urunId-"+urunId).value;
+            adet = document.getElementById("adet-"+urunId).value;
+            const formData = new FormData();
+            formData.append('urunId', urunId);
+            formData.append('adet', adet);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+            console.log(formData);
+            fetch('/', {
+              method: 'POST',
+              body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+              console.log('Success:', data);
+              
+            })
+            .catch(error => {
+              document.getElementById("output-message").innerText = "Sorry! There was an error submitting your enquiry. "
+              
+              $('#uzunluk').load(window.location.href + ' #uzunluk')
+            });
+            });
+          
+        }
+
+    </script>
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+</body>
+</html>

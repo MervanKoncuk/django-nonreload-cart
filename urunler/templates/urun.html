@@ -1,0 +1,33 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block content %}
+
+      <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="{% url 'index' %}?search={{urun.kategori}}">{{urun.kategori}}</a></li>
+              <li class="breadcrumb-item"><a href="#">{{urun.tek}}</a></li>
+              <li class="breadcrumb-item active" aria-current="page">{{urun.isim}}</li>
+            </ol>
+          </nav>
+        <div class="row">
+            
+                <div class="col-4">
+                    {% if urun.resim %}
+                          <img src="{{urun.resim.url}}" class="card-img-top" alt="...">
+                      {% else %}
+                          <img src="{% static 'resim.jpg' %}" class="card-img-top" alt="...">
+                      {% endif %}
+                </div>
+                <div class="col-8">
+                    <h5>{{urun.isim}}</h5>
+                    <p>{{urun.aciklama}}</p>
+                    <small>{{urun.fiyat}}</small>
+                </div>
+        
+        </div>
+      </div>
+      
+{% endblock content %}
+   

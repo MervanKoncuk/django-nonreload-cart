@@ -1,0 +1,33 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            {% for urun in urun %}
+            <div class="col-12 my-4">
+                <div class="card">
+                    <div class="row">
+                        <!-- {% comment %} <div class="col-4">
+                            <img src="{{urun.urun.resim.url}}" height="250px" alt="">
+                        </div> {% endcomment %} -->
+                        <div class="col-8">
+                            <h5>{{urun.urun.isim}}</h5>
+                            <p>Ürün Fiyatı : {{urun.urun.fiyat}}TL</p>
+                            <p>Adet: {{urun.adet}}</p>
+                            <p>Toplam Fiyat : {{urun.fiyat}}TL</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="odeme" value="{{toplam}}">
+                <input type="submit" value="Ödeme yap" class="btn btn-primary">
+            </form>   
+            {% endfor %}
+
+            <p>Toplam Fiyat : {{toplam}}TL</p>
+        </div>
+    </div>
+{% endblock content %}
