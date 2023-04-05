@@ -246,7 +246,7 @@ def sepet(request):
     toplam = 0
     
     for i in urun:
-        toplam += i.fiyat
+        toplam += i.fiya
         
     if request.method == "POST":
         odeme = request.POST['odeme']
